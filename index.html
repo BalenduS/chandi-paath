@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chandi Paath</title>
+<meta name="description" content="Seven-day Sri Chandi Paath (Durga Saptashati) tracker with Telugu tithis.">
+<meta name="theme-color" content="#9B1C1C" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#180D0D" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Chandi Paath">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&family=Noto+Sans+Telugu:wght@400;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F6EFE5; --surface:#FFFDF9; --surface-2:#F1E6D6; --ink:#2A1A14; --muted:#6B5345;
+  --line:#E4D3BB; --accent:#9B1C1C; --accent-ink:#FFFFFF; --accent-soft:#F6E0DC;
+  --gold:#C77B12; --gold-soft:#FBEBD0; --good:#2F6B3A; --good-soft:#E1EEDD; --warn:#9A5B00;
+  --kali:#2A1A14; --lakshmi:#B8860B; --saraswati:#6F87A3;
+  --shadow:0 1px 2px rgba(60,30,20,.06),0 6px 20px rgba(60,30,20,.06);
+  --display:'Cormorant Garamond',Georgia,serif; --sans:'Source Sans 3',system-ui,-apple-system,sans-serif; --hi:'Tiro Devanagari Hindi','Noto Serif Devanagari',serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#180D0D;--surface:#241516;--surface-2:#2E1C1C;--ink:#F3E6DA;--muted:#B9A395;
+  --line:#3E2A28;--accent:#E0625A;--accent-ink:#1A0B0B;--accent-soft:#3A1C1C;--gold:#F0A93A;--gold-soft:#3A2A14;
+  --good:#8CC795;--good-soft:#1E3222;--warn:#F0B35A;--kali:#E9D9CC;--lakshmi:#E3B341;--saraswati:#9DB4CF;--shadow:none;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--bg:#180D0D;--surface:#241516;--surface-2:#2E1C1C;--ink:#F3E6DA;--muted:#B9A395;
+  --line:#3E2A28;--accent:#E0625A;--accent-ink:#1A0B0B;--accent-soft:#3A1C1C;--gold:#F0A93A;--gold-soft:#3A2A14;
+  --good:#8CC795;--good-soft:#1E3222;--warn:#F0B35A;--kali:#E9D9CC;--lakshmi:#E3B341;--saraswati:#9DB4CF;--shadow:none;}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.app{max-width:520px;margin:0 auto;padding-inline:16px;padding-block:12px 96px;display:flex;flex-direction:column;gap:18px}
+.hi{font-family:var(--hi)}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px}
+.brand{display:flex;flex-direction:column}
+.brand .inv{font-family:var(--hi);color:var(--accent);font-size:14px}
+.brand h1{margin:0;font-family:var(--display);font-weight:700;font-size:28px;line-height:1.1;text-wrap:balance}
+.sync{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.sync.on i{background:var(--good)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px}
+.spread{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.h2{font-family:var(--display);font-weight:700;font-size:24px;line-height:1.15;margin:0}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+body{font-variant-numeric:lining-nums}
+.tabular{font-variant-numeric:lining-nums tabular-nums}
+
+/* Day strip */
+.strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.dchip{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:64px}
+.dchip .dn{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.dchip .dd{font-family:var(--display);font-weight:700;font-size:22px;line-height:1}
+.dchip .dm{width:6px;height:6px;border-radius:50%;background:transparent}
+.dchip.done{background:var(--good-soft);border-color:var(--good)}
+.dchip.done .dm{background:var(--good)}
+.dchip.missed .dm{background:var(--warn)}
+.dchip.today{border-color:var(--accent)}
+.dchip.sel{outline:2px solid var(--accent);outline-offset:1px}
+.dchip.today .dn{color:var(--accent)}
+
+/* Today hero */
+.hero{display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.hero .part{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);align-self:flex-start}
+.hero .part b{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chapters{font-family:var(--display);font-weight:700;font-size:40px;line-height:1.05;color:var(--accent);margin:0;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.tag.gold{border-color:var(--gold);color:var(--gold);background:var(--gold-soft)}
+.tag.good{border-color:var(--good);color:var(--good);background:var(--good-soft)}
+.progress{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s}
+
+/* Steps */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.step{border-top:1px solid var(--line)}
+.step:first-child{border-top:0}
+.step button{width:100%;background:none;border:0;display:flex;align-items:center;gap:12px;padding:12px 2px;text-align:left;min-height:52px}
+.box{flex-shrink:0;width:26px;height:26px;border-radius:8px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s}
+.box svg{opacity:0;transition:opacity .15s}
+.step.on .box{background:var(--accent);border-color:var(--accent)}
+.step.on .box svg{opacity:1}
+.step .txt{flex:1;display:flex;flex-direction:column;min-width:0}
+.step .en{font-weight:600}
+.step.on .en{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.step .sub{font-size:14px;color:var(--muted)}
+.step .hin{font-family:var(--hi);font-size:15px;color:var(--muted);white-space:nowrap}
+.step.main .en{color:var(--accent);font-size:18px}
+.step.main.on .en{color:var(--muted)}
+.num{width:22px;text-align:center;font-family:var(--display);font-weight:700;color:var(--muted);font-size:17px}
+
+.btn{border:0;border-radius:12px;padding:14px 18px;font-weight:700;font-size:16px;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.quiet{background:transparent;color:var(--muted);padding:10px 12px;min-height:44px;font-weight:600}
+.btn.block{width:100%}
+.btn.danger{color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:default}
+
+/* Start */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600}
+input[type=date]{font:inherit;font-size:17px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);width:100%;min-height:50px}
+.quick{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:600;min-height:40px}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.plan{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.plan li{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.plan li:first-child{border-top:0}
+.plan .pd{font-family:var(--display);font-weight:700;font-size:19px}
+.plan .pc{font-weight:600}
+.plan .pw{font-size:13px;color:var(--muted);text-align:right}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* Rounds */
+.rounds{display:flex;flex-direction:column;gap:10px}
+.rcard{display:flex;flex-direction:column;gap:10px}
+.mini{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.mini span{height:8px;border-radius:4px;background:var(--surface-2)}
+.mini span.d{background:var(--good)}
+
+/* Guide */
+.guide{display:flex;flex-direction:column;gap:14px}
+.guide h3{margin:0;font-family:var(--display);font-size:22px;font-weight:700;color:var(--accent);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.guide h3 span{font-family:var(--hi);font-size:16px;color:var(--muted);font-weight:400}
+.guide p,.guide ul,.guide ol{margin:0}
+.guide ul,.guide ol{padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.parts div{border:1px solid var(--line);border-top:4px solid var(--c);border-radius:10px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;gap:2px;background:var(--surface)}
+.parts b{font-family:var(--display);font-size:17px;line-height:1.1}
+.parts small{color:var(--muted);font-size:13px}
+
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
+nav.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+nav.tabs button{background:none;border:0;padding:10px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);min-height:56px}
+nav.tabs button[aria-current="page"]{color:var(--accent)}
+nav.tabs svg{width:22px;height:22px}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:20}
+.banner{border-radius:12px;padding:12px 14px;background:var(--gold-soft);border:1px solid var(--gold);display:flex;flex-direction:column;gap:2px}
+.celebrate{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.celebrate .om{font-family:var(--hi);font-size:22px;color:var(--accent)}
+.te{font-family:'Noto Sans Telugu',var(--sans)}
+.qgroup{display:flex;flex-direction:column;gap:8px}
+.chip small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.chip{text-align:left;line-height:1.25}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--surface-2);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:8px;padding:8px 2px;font-size:13px;font-weight:600;color:var(--muted);min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.alist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto}
+.alist button{width:100%;display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;min-height:60px}
+.alist button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.alist .dt{display:flex;flex-direction:column;align-items:center;line-height:1}
+.alist .dt b{font-family:var(--display);font-size:26px}
+.alist .dt small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.alist .info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.alist .l1{font-weight:600}
+.alist .badges{display:flex;flex-wrap:wrap;gap:4px}
+.badge{font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.badge.wd{border-color:var(--accent);color:var(--accent)}
+.badge.tt{border-color:var(--gold);color:var(--gold);background:var(--gold-soft)}
+.badge.both{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.plan .pt{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.plan .pt.devi{color:var(--gold);font-weight:700}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <span class="inv">॥ श्री दुर्गायै नमः ॥</span>
+      <h1>Chandi Paath</h1>
+    </div>
+    <span class="sync" id="sync" aria-live="polite"><i></i><span>On this phone</span></span>
+  </header>
+  <main id="view"></main>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="in">
+    <button type="button" id="tab-today" data-tab="today" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.5 3 4 5.2 4 7.3A4 4 0 0 1 12 14.5a4 4 0 0 1-4-4.2C8 8.2 9.5 6 12 3z"/><path d="M5 18h14"/><path d="M7 21h10"/></svg>Today</button>
+    <button type="button" id="tab-history" data-tab="history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>History</button>
+    <button type="button" id="tab-guide" data-tab="guide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>Guide</button>
+  </div>
+</nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* Tithi at local sunrise (Hyderabad), low-precision Meeus. */
+var PANCHANG=(function(){
+  var R=Math.PI/180;
+  function n360(x){x%=360;return x<0?x+360:x}
+  function sunLon(T){
+    var L0=280.46646+36000.76983*T, M=(357.52911+35999.05029*T)*R;
+    var C=(1.914602-0.004817*T)*Math.sin(M)+(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+    return n360(L0+C-0.00569-0.00478*Math.sin((125.04-1934.136*T)*R));
+  }
+  var TERMS=[[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],
+    [2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],
+    [2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],
+    [2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],
+    [2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069]];
+  function moonLon(T){
+    var Lp=218.3164477+481267.88123421*T, D=297.8501921+445267.1114034*T, M=357.5291092+35999.0502909*T,
+        Mp=134.9633964+477198.8675055*T, F=93.2720950+483202.0175233*T, E=1-0.002516*T, s=0;
+    for(var i=0;i<TERMS.length;i++){var t=TERMS[i],arg=(t[0]*D+t[1]*M+t[2]*Mp+t[3]*F)*R,e=Math.abs(t[1])===1?E:Math.abs(t[1])===2?E*E:1;s+=t[4]*e*Math.sin(arg)}
+    s+=3958*Math.sin((119.75+131.849*T)*R)+1962*Math.sin((Lp-F)*R);
+    return n360(Lp+s/1e6-0.00478*Math.sin((125.04-1934.136*T)*R));
+  }
+  function jd(ms){return ms/864e5+2440587.5}
+  function elong(ms){var T=(jd(ms)-2451545)/36525;return n360(moonLon(T)-sunLon(T))}
+  /* Sunrise at Hyderabad for a local calendar date, returned as UTC ms. */
+  var LAT=17.385, LNG=78.4867, TZ=5.5;
+  function sunriseMs(y,m,d){
+    var noon=Date.UTC(y,m-1,d,12)-TZ*36e5, n=jd(noon)-2451545;
+    var L=n360(280.46+0.9856474*n), g=n360(357.528+0.9856003*n)*R;
+    var lam=(L+1.915*Math.sin(g)+0.02*Math.sin(2*g))*R, eps=23.439*R;
+    var dec=Math.asin(Math.sin(eps)*Math.sin(lam));
+    var ra=Math.atan2(Math.cos(eps)*Math.sin(lam),Math.cos(lam))/R;
+    var eqt=(L-n360(ra)); if(eqt>180)eqt-=360; if(eqt<-180)eqt+=360; eqt*=4;
+    var cosH=(Math.sin(-0.833*R)-Math.sin(LAT*R)*Math.sin(dec))/(Math.cos(LAT*R)*Math.cos(dec));
+    var H=Math.acos(Math.max(-1,Math.min(1,cosH)))/R;
+    var solarNoonMin=720-4*LNG-eqt; /* UTC minutes */
+    return Date.UTC(y,m-1,d)+(solarNoonMin-4*H)*6e4;
+  }
+  var NAMES=[['Pratipada','పాడ్యమి'],['Dwitiya','విదియ'],['Tritiya','తదియ'],['Chaviti','చవితి'],['Panchami','పంచమి'],['Shashti','షష్ఠి'],
+    ['Saptami','సప్తమి'],['Ashtami','అష్టమి'],['Navami','నవమి'],['Dashami','దశమి'],['Ekadashi','ఏకాదశి'],['Dwadashi','ద్వాదశి'],
+    ['Trayodashi','త్రయోదశి'],['Chaturdashi','చతుర్దశి']];
+  var cache={};
+  function tithi(isoDate){
+    if(cache[isoDate])return cache[isoDate];
+    var p=isoDate.split('-'), ms=sunriseMs(+p[0],+p[1],+p[2]);
+    var n=Math.floor(elong(ms)/12)+1; /* 1..30 */
+    var shukla=n<=15, k=shukla?n:n-15, en, te;
+    if(n===15){en='Purnima';te='పౌర్ణమి'}else if(n===30){en='Amavasya';te='అమావాస్య'}else{en=NAMES[k-1][0];te=NAMES[k-1][1]}
+    var devi=(k===8||k===9||k===14)&&n!==30;
+    var r={n:n,k:k,shukla:shukla,paksha:shukla?'Shukla':'Bahula',pakshaTe:shukla?'శుక్ల':'బహుళ',name:en,te:te,devi:devi,
+      label:(n===15||n===30)?en:(shukla?'Shukla':'Bahula')+' '+en, labelTe:(n===15||n===30)?te:(shukla?'శుక్ల':'బహుళ')+' '+te};
+    cache[isoDate]=r;return r;
+  }
+  return {tithi:tithi,sunriseMs:sunriseMs};
+})();
+</script>
+<script>
+(function(){
+'use strict';
+
+/* ---------- Content from the guide ---------- */
+var SCHEDULE = [
+  {ch:'Chapter 1', n:[1], part:'kali'},
+  {ch:'Chapters 2 & 3', n:[2,3], part:'lakshmi'},
+  {ch:'Chapter 4', n:[4], part:'lakshmi'},
+  {ch:'Chapters 5 – 8', n:[5,6,7,8], part:'saraswati'},
+  {ch:'Chapters 9 & 10', n:[9,10], part:'saraswati'},
+  {ch:'Chapter 11', n:[11], part:'saraswati'},
+  {ch:'Chapters 12 & 13', n:[12,13], part:'saraswati'}
+];
+var PARTS = {
+  kali:{name:'Sri Maha Kali', hi:'श्री महाकाली', charitra:'Prathama Charitra', color:'var(--kali)'},
+  lakshmi:{name:'Sri Maha Lakshmi', hi:'श्री महालक्ष्मी', charitra:'Madhyama Charitra', color:'var(--lakshmi)'},
+  saraswati:{name:'Sri Maha Saraswati', hi:'श्री महासरस्वती', charitra:'Uttara Charitra', color:'var(--saraswati)'}
+};
+var STEPS = [
+  ['Devi Suktam','देवी सूक्तम्'],['Kavacham','कवचम्'],['Argala Stotra','अर्गला स्तोत्र'],['Keelakam','कीलकम्'],
+  ['Ratri Suktam','रात्रि सूक्तम्'],['Devi Mahatmya','देवी माहात्म्य'],['Phala Shruti','फलश्रुति'],['Kshama Prarthana','क्षमा प्रार्थना']
+];
+var MAIN_STEP = 5;
+var WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var WD_LONG = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var AUSPICIOUS = {2:1,5:1,6:1};
+
+/* ---------- Dates (local, YYYY-MM-DD) ---------- */
+function pad(n){return (n<10?'0':'')+n}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function addDays(s,k){var d=parse(s);d.setDate(d.getDate()+k);return iso(d)}
+function diff(a,b){return Math.round((parse(b)-parse(a))/864e5)}
+function todayIso(){return iso(new Date())}
+function fmt(s){var d=parse(s);return WD[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()]}
+function fmtLong(s){var d=parse(s);return WD_LONG[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()}
+function dow(s){return parse(s).getDay()}
+
+/* ---------- State ---------- */
+var state = {rounds:[], tab:'today', selectedId:null, selectedDay:null, startDate:todayIso(), synced:false, confirmDel:null, filter:'all', starting:false, openHist:null, exp:null};
+function T(s){return PANCHANG.tithi(s)}
+function ausp(s){var w=!!AUSPICIOUS[dow(s)], t=T(s).devi;return {wd:w,tt:t,any:w||t,both:w&&t}}
+function badges(s){var a=ausp(s),t=T(s),h='';
+  if(a.both)h+='<span class="badge both">Both</span>';
+  if(a.wd)h+='<span class="badge wd">'+WD_LONG[dow(s)]+'</span>';
+  if(a.tt)h+='<span class="badge tt">'+esc(t.name)+'</span>';
+  return h}
+
+function newRound(start){
+  var days={};for(var i=1;i<=7;i++){days[String(i)]={steps:[false,false,false,false,false,false,false,false],done:false,doneAt:null}}
+  return {id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), startDate:start, createdAt:new Date().toISOString(), days:days};
+}
+function roundDone(r){var c=0;for(var i=1;i<=7;i++){if(r.days[String(i)]&&r.days[String(i)].done)c++}return c}
+function sorted(){return state.rounds.slice().sort(function(a,b){return a.startDate<b.startDate?1:a.startDate>b.startDate?-1:(a.createdAt<b.createdAt?1:-1)})}
+function current(){
+  if(state.selectedId){var f=state.rounds.filter(function(r){return r.id===state.selectedId})[0];if(f)return f}
+  var t=todayIso(), list=sorted();
+  var active=list.filter(function(r){var k=diff(r.startDate,t);return k>=-30&&k<=6&&roundDone(r)<7});
+  return active[0]||list.filter(function(r){return roundDone(r)<7})[0]||null;
+}
+
+/* ---------- Storage: this phone, plus optional Google Sheets sync ---------- */
+var LS_KEY='chandi-paath-rounds-v1', LS_DEL='chandi-paath-deleted-v1', LS_URL='chandi-paath-sheet-url', LS_SYNC='chandi-paath-last-sync';
+function lsGet(k,fb){try{var v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch(e){return fb}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function lsSave(){lsSet(LS_KEY,state.rounds)}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+var deleted=lsGet(LS_DEL,[]);
+state.rounds=lsGet(LS_KEY,[]);
+state.sheetUrl=lsGet(LS_URL,'');
+state.lastSync=lsGet(LS_SYNC,null);
+state.syncStatus=state.sheetUrl?'idle':'off';
+state.syncMsg='';
+
+function persist(r){r.updatedAt=new Date().toISOString();lsSave();scheduleSync()}
+function remove(id){
+  state.rounds=state.rounds.filter(function(r){return r.id!==id});lsSave();
+  if(deleted.indexOf(id)<0){deleted.push(id);lsSet(LS_DEL,deleted)}
+  scheduleSync();
+}
+
+/* Merge two lists of rounds: newest updatedAt wins, tombstones removed. */
+function mergeRounds(a,b,tomb){
+  var by={};
+  a.concat(b).forEach(function(r){if(!r||!r.id||tomb.indexOf(r.id)>=0)return;
+    var cur=by[r.id];if(!cur||(r.updatedAt||r.createdAt||'')>(cur.updatedAt||cur.createdAt||''))by[r.id]=r});
+  return Object.keys(by).map(function(k){return by[k]});
+}
+
+var syncTimer=null;
+function scheduleSync(){if(!state.sheetUrl)return;clearTimeout(syncTimer);syncTimer=setTimeout(pushSync,1500)}
+function setSync(st,msg){state.syncStatus=st;state.syncMsg=msg||'';paintSync()}
+function stamp(){state.lastSync=new Date().toISOString();lsSet(LS_SYNC,state.lastSync)}
+
+/* Apps Script web apps accept a text/plain POST without a CORS preflight. */
+function pushSync(){
+  if(!state.sheetUrl)return Promise.resolve();
+  if(!navigator.onLine){setSync('offline','Offline. Will sync when you are back online.');return Promise.resolve()}
+  setSync('working');
+  var body=JSON.stringify({action:'save',rounds:state.rounds,deleted:deleted,rows:historyRows()});
+  return fetch(state.sheetUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+    .then(function(){stamp();setSync('ok')})
+    .catch(function(){setSync('error','Could not reach your Google Sheet. Saved on this phone.')});
+}
+function pullSync(){
+  if(!state.sheetUrl)return Promise.resolve();
+  if(!navigator.onLine){setSync('offline','Offline. Showing what is saved on this phone.');return Promise.resolve()}
+  setSync('working');
+  return fetch(state.sheetUrl+(state.sheetUrl.indexOf('?')<0?'?':'&')+'action=load',{method:'GET'})
+    .then(function(res){return res.json()})
+    .then(function(data){
+      if(!data||!data.ok)throw new Error((data&&data.error)||'bad response');
+      (data.deleted||[]).forEach(function(id){if(deleted.indexOf(id)<0)deleted.push(id)});lsSet(LS_DEL,deleted);
+      state.rounds=mergeRounds(state.rounds,data.rounds||[],deleted);lsSave();render();
+      return pushSync();
+    })
+    .catch(function(){setSync('error','Could not read your Google Sheet. Check the web app URL in History.')});
+}
+function connect(){
+  if(state.sheetUrl)pullSync();
+  window.addEventListener('online',function(){if(state.sheetUrl)pullSync()});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&state.sheetUrl)pullSync()});
+}
+function paintSync(){
+  var sy=document.getElementById('sync');if(!sy)return;
+  var on=state.sheetUrl&&state.syncStatus==='ok', txt=!state.sheetUrl?'On this phone':state.syncStatus==='working'?'Syncing…':state.syncStatus==='ok'?'Synced to Sheets':state.syncStatus==='offline'?'Offline':state.syncStatus==='error'?'Sync failed':'Sheets';
+  sy.className='sync'+(on?' on':'');sy.lastElementChild.textContent=txt;
+  var box=document.getElementById('sync-msg');
+  if(box){box.textContent=state.syncMsg||(state.lastSync?'Last synced '+fmt(iso(new Date(state.lastSync)))+', '+new Date(state.lastSync).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'');}
+}
+
+/* ---------- UI helpers ---------- */
+var view=document.getElementById('view');
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var toastTimer;
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true},2200)}
+var CHECK='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+function dayStatus(r,i){
+  var d=addDays(r.startDate,i-1), t=todayIso(), rec=r.days[String(i)];
+  if(rec.done)return 'done';
+  if(d===t)return 'today';
+  if(d<t)return 'missed';
+  return 'upcoming';
+}
+function defaultDay(r){
+  var k=diff(r.startDate,todayIso())+1;
+  if(k>=1&&k<=7&&!r.days[String(k)].done)return k;
+  for(var i=1;i<=7;i++){if(!r.days[String(i)].done)return i}
+  return 7;
+}
+
+/* ---------- Views ---------- */
+function renderToday(){
+  var r=current();
+  if(!r||state.starting)return renderStart();
+  var t=todayIso();
+  var sel=state.selectedDay&&state.selectedId===r.id?state.selectedDay:defaultDay(r);
+  var date=addDays(r.startDate,sel-1), rec=r.days[String(sel)], s=SCHEDULE[sel-1], p=PARTS[s.part];
+  var doneCount=roundDone(r), stepsDone=rec.steps.filter(Boolean).length;
+  var startsIn=diff(t,r.startDate);
+  var roundNo=sorted().slice().reverse().map(function(x){return x.id}).indexOf(r.id)+1;
+
+  var h='';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:12px">';
+  h+='<div class="spread"><div><div class="eyebrow">Round '+roundNo+'</div><div class="small muted">'+esc(fmt(r.startDate))+' – '+esc(fmt(addDays(r.startDate,6)))+'</div></div>';
+  h+='<div class="tabular" style="font-weight:700">'+doneCount+' / 7 days</div></div>';
+  h+='<div class="strip" role="group" aria-label="Days of this round">';
+  for(var i=1;i<=7;i++){
+    var st=dayStatus(r,i), dd=parse(addDays(r.startDate,i-1));
+    h+='<button type="button" id="day-'+i+'" class="dchip '+st+(i===sel?' sel':'')+'" data-day="'+i+'" aria-pressed="'+(i===sel)+'" aria-label="Day '+i+', '+esc(fmt(iso(dd)))+', '+st+'">';
+    h+='<span class="dn">'+(st==='today'?'Today':WD[dd.getDay()])+'</span><span class="dd tabular">'+dd.getDate()+'</span><span class="dm"></span></button>';
+  }
+  h+='</div></section>';
+
+  if(doneCount===7){
+    h+='<section class="card celebrate"><span class="om">॥ इति श्री दुर्गा सप्तशती ॥</span><h2 class="h2">Round complete</h2><p class="muted" style="margin:0">All seven days of the Saptashati are done.</p><button type="button" class="btn primary" id="go-start">Start another round</button></section>';
+  } else if(startsIn>0){
+    h+='<div class="banner"><strong>Begins in '+startsIn+' day'+(startsIn>1?'s':'')+'</strong><span class="small">Day 1 is '+esc(fmtLong(r.startDate))+'. You can still look at each day’s reading below.</span></div>';
+  }
+
+  h+='<section class="card hero">';
+  h+='<div class="spread"><div class="eyebrow">Day '+sel+' of 7 · '+esc(fmt(date))+'</div>'+(rec.done?'<span class="tag good">Completed</span>':'')+'</div>';
+  h+='<span class="part"><b style="background:'+p.color+'"></b>'+esc(p.charitra)+' · '+esc(p.name)+'</span>';
+  h+='<h2 class="chapters">'+esc(s.ch)+'</h2>';
+  h+='<div class="meta">';
+  h+='<span class="tag">'+s.n.length+' chapter'+(s.n.length>1?'s':'')+' of Devi Mahatmya</span>';
+  var tdy=T(date);
+  h+='<span class="tag'+(tdy.devi?' gold':'')+'"><span class="te">'+esc(tdy.labelTe)+'</span> · '+esc(tdy.label)+'</span>';
+  if(AUSPICIOUS[dow(date)])h+='<span class="tag gold">'+WD_LONG[dow(date)]+'</span>';
+  h+='</div>';
+  h+='<div class="progress" aria-hidden="true"><span style="width:'+Math.round(stepsDone/8*100)+'%"></span></div>';
+  h+='<ol class="steps" aria-label="Order of reading">';
+  STEPS.forEach(function(st,idx){
+    var on=rec.steps[idx], main=idx===MAIN_STEP;
+    h+='<li class="step'+(on?' on':'')+(main?' main':'')+'"><button type="button" id="step-'+idx+'" data-step="'+idx+'" aria-pressed="'+on+'">';
+    h+='<span class="num">'+(idx+1)+'</span><span class="box">'+CHECK+'</span><span class="txt"><span class="en">'+esc(main?s.ch:st[0])+'</span>';
+    if(main)h+='<span class="sub">'+esc(st[0])+' · '+esc(p.name)+'</span>';
+    h+='</span><span class="hin">'+esc(st[1])+'</span></button></li>';
+  });
+  h+='</ol>';
+  if(rec.done){
+    h+='<button type="button" class="btn ghost block" id="undo-day">Mark day '+sel+' as not done</button>';
+  } else {
+    h+='<button type="button" class="btn primary block" id="complete-day">Complete day '+sel+'</button>';
+  }
+  h+='</section>';
+
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:6px"><div class="eyebrow">While reading</div><p class="small" style="margin:0">Read with faith and correct pronunciation, the mind fixed on Sri Devi. Do not talk, sleep, sneeze, yawn or spit, and do not stop in the middle of a chapter. Ring the bell at the start and end of each chapter.</p></section>';
+
+  if(doneCount<7)h+='<button type="button" class="btn quiet" id="new-round" style="align-self:center">Start a different round</button>';
+  view.innerHTML=h;
+  on('new-round',function(){state.starting=true;render();window.scrollTo(0,0)});
+  bind('[data-day]',function(b){state.selectedId=r.id;state.selectedDay=+b.dataset.day;render()});
+  bind('[data-step]',function(b){
+    var idx=+b.dataset.step;rec.steps[idx]=!rec.steps[idx];
+    if(rec.steps.every(Boolean)&&!rec.done){rec.done=true;rec.doneAt=new Date().toISOString();toast('Day '+sel+' complete. जय माँ')}
+    persist(r);render();
+  });
+  on('complete-day',function(){rec.steps=rec.steps.map(function(){return true});rec.done=true;rec.doneAt=new Date().toISOString();persist(r);toast('Day '+sel+' complete. जय माँ');
+    var next=null;for(var i=sel+1;i<=7;i++){if(!r.days[String(i)].done){next=i;break}}
+    state.selectedId=r.id;state.selectedDay=next||sel;render();window.scrollTo({top:0,behavior:'smooth'})});
+  on('undo-day',function(){rec.done=false;rec.doneAt=null;persist(r);render()});
+  on('go-start',function(){state.starting=true;state.selectedId=null;state.selectedDay=null;render();window.scrollTo(0,0)});
+}
+
+function renderStart(){
+  var s=state.startDate, t=todayIso(), hasOpen=state.rounds.some(function(r){return roundDone(r)<7});
+  var h='';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><div class="spread"><h2 class="h2">Begin a Saptashati</h2>'+(state.starting&&hasOpen?'<button type="button" class="btn quiet" id="cancel-start">Cancel</button>':'')+'</div><p class="muted small" style="margin:0">Pick the day you begin. The thirteen chapters are spread over the next seven days, with each day’s reading laid out in order.</p></section>';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:14px">';
+  h+='<div class="field"><label for="start-date">Day 1 begins on</label><input type="date" id="start-date" value="'+esc(s)+'"></div>';
+  var st=T(s), sa=ausp(s);
+  h+='<div class="small" style="margin-top:-6px"><span class="te">'+esc(st.labelTe)+'</span> · '+esc(st.label)+'</div>';
+  if(sa.any)h+='<div class="small" style="color:var(--gold);font-weight:700">'+(sa.both?WD_LONG[dow(s)]+' and '+st.name+' together: doubly auspicious to begin.':sa.wd?WD_LONG[dow(s)]+' is an auspicious day to begin.':st.name+' is a Devi tithi, auspicious to begin.')+'</div>';
+
+  /* Quick picks: next weekday and next Devi tithi */
+  function nextMatch(fn){for(var k=1;k<=60;k++){var d=addDays(t,k);if(fn(d))return d}return null}
+  var wdPicks=[2,5,6].map(function(w){return [WD_LONG[w],nextMatch(function(d){return dow(d)===w})]});
+  var ttPicks=[8,9,14].map(function(k){var d=nextMatch(function(x){var tt=T(x);return tt.k===k&&tt.n!==30});return [d?T(d).name:'',d]});
+  var pi=0;
+  function chipRow(title,arr){var r='<div class="qgroup"><div class="eyebrow">'+title+'</div><div class="quick">';
+    arr.forEach(function(p){if(!p[1])return;var extra=p[1]&&title!=='Devi tithis'?T(p[1]).name:(p[1]?T(p[1]).paksha:'');
+      r+='<button type="button" class="chip" id="pick-'+(pi++)+'" data-pick="'+p[1]+'" aria-pressed="'+(p[1]===s)+'">Next '+esc(p[0])+'<small class="tabular">'+esc(fmt(p[1]))+' · '+esc(extra)+'</small></button>'});
+    return r+'</div></div>'}
+  h+=chipRow('Weekdays · Tue, Fri, Sat',wdPicks);
+  h+=chipRow('Devi tithis',ttPicks);
+
+  /* Upcoming auspicious days, Telugu calendar */
+  var f=state.filter, rows=[];
+  for(var k=0;k<45&&rows.length<30;k++){var d=addDays(t,k),a=ausp(d);
+    if((f==='all'&&a.any)||(f==='wd'&&a.wd)||(f==='tt'&&a.tt)||(f==='both'&&a.both))rows.push(d)}
+  h+='<div class="qgroup"><div class="eyebrow">Upcoming auspicious days</div>';
+  h+='<div class="seg" role="group" aria-label="Filter">';
+  [['all','All'],['wd','Weekdays'],['tt','Tithis'],['both','Both']].forEach(function(x){h+='<button type="button" id="f-'+x[0]+'" data-filter="'+x[0]+'" aria-pressed="'+(f===x[0])+'">'+x[1]+'</button>'});
+  h+='</div><ul class="alist">';
+  if(!rows.length)h+='<li class="muted small">None in the next 45 days.</li>';
+  rows.forEach(function(d){var dd=parse(d),tt=T(d);
+    h+='<li><button type="button" id="a-'+d+'" data-pick="'+d+'" aria-pressed="'+(d===s)+'"><span class="dt"><small>'+WD[dd.getDay()]+'</small><b class="tabular">'+dd.getDate()+'</b><small>'+MON[dd.getMonth()]+'</small></span>';
+    h+='<span class="info"><span class="l1"><span class="te">'+esc(tt.labelTe)+'</span> · '+esc(tt.label)+'</span><span class="badges">'+badges(d)+'</span></span></button></li>'});
+  h+='</ul></div>';
+
+  h+='<div class="eyebrow">Your seven days</div><ul class="plan" aria-label="Your seven days">';
+  SCHEDULE.forEach(function(d,i){var dt=addDays(s,i),tt=T(dt);
+    h+='<li><span class="pd">Day '+(i+1)+'</span><span class="pc"><span class="dot" style="background:'+PARTS[d.part].color+'"></span>'+esc(d.ch)+'<span class="pt'+(tt.devi?' devi':'')+'">'+esc(tt.label)+'</span></span><span class="pw tabular">'+esc(fmt(dt))+'</span></li>'});
+  h+='</ul>';
+  h+='<button type="button" class="btn primary block" id="begin">Begin on '+esc(fmt(s))+'</button>';
+  h+='</section>';
+  view.innerHTML=h;bindStart();
+}
+function bindStart(){
+  var inp=document.getElementById('start-date');
+  if(inp)inp.addEventListener('change',function(){if(inp.value){state.startDate=inp.value;render()}});
+  bind('[data-pick]',function(b){state.startDate=b.dataset.pick;render()});
+  bind('[data-filter]',function(b){state.filter=b.dataset.filter;render()});
+  on('cancel-start',function(){state.starting=false;render()});
+  on('begin',function(){
+    var r=newRound(state.startDate);state.rounds.push(r);state.selectedId=r.id;state.selectedDay=null;state.starting=false;persist(r);
+    toast('Round started · Day 1 is '+fmt(r.startDate));setTab('today');
+  });
+}
+
+function csvCell(v){v=v==null?'':String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function historyRows(){
+  var rows=[['Round','Round start','Round status','Day','Chapters','Charitra','Planned date','Weekday','Tithi (Telugu)','Tithi','Completed','Completed on']];
+  var list=sorted().slice().reverse();
+  list.forEach(function(r,i){
+    var dc=roundDone(r);
+    for(var d=1;d<=7;d++){var dt=addDays(r.startDate,d-1),rec=r.days[String(d)],sc=SCHEDULE[d-1],tt=T(dt);
+      rows.push([i+1,r.startDate,dc===7?'Complete':dc+'/7',d,sc.ch.replace('–','to').replace('&','and'),PARTS[sc.part].name,dt,WD_LONG[dow(dt)],tt.labelTe,tt.label,rec.done?'Yes':'No',rec.doneAt?iso(new Date(rec.doneAt)):''])}
+  });
+  return rows;
+}
+
+function renderHistory(){
+  var list=sorted(), total=list.length, done=list.filter(function(r){return roundDone(r)===7});
+  var daysRead=list.reduce(function(a,r){return a+roundDone(r)},0);
+  var lastDone=null;done.forEach(function(r){var t=r.days['7'].doneAt||'';if(!lastDone||t>lastDone)lastDone=t});
+  var h='<section class="card" style="display:flex;flex-direction:column;gap:12px"><h2 class="h2">Your paath history</h2>';
+  h+='<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center">';
+  [[done.length,'Rounds completed'],[daysRead,'Days read'],[lastDone?fmt(iso(new Date(lastDone))):'—','Last completed']].forEach(function(x){
+    h+='<div style="background:var(--surface-2);border-radius:10px;padding:10px 4px;display:flex;flex-direction:column;gap:2px"><b class="tabular" style="font-family:var(--display);font-size:24px;line-height:1.1">'+esc(x[0])+'</b><span class="small muted" style="font-size:12px">'+x[1]+'</span></div>'});
+  h+='</div></section>';
+
+  /* Google Sheets sync */
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:10px"><div><div style="font-weight:700">Google Sheets sync</div><div class="small muted">Keeps a copy of every round in your own Google Sheet, and lets another phone load the same history.</div></div>';
+  if(!state.sheetUrl){
+    h+='<div class="field"><label for="sheet-url" class="small">Apps Script web app URL</label><input type="url" id="sheet-url" placeholder="https://script.google.com/macros/s/…/exec" style="font:inherit;font-size:15px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);width:100%;min-height:48px"></div>';
+    h+='<button type="button" class="btn ghost block" id="sheet-connect">Connect Google Sheet</button>';
+    h+='<div class="small muted">Set-up steps are in the README that came with the app.</div>';
+  } else {
+    h+='<div class="small" id="sync-msg" style="color:var(--muted)"></div>';
+    h+='<div class="row" style="gap:8px"><button type="button" class="btn ghost" id="sheet-sync" style="flex:1">Sync now</button><button type="button" class="btn quiet danger" id="sheet-off">Disconnect</button></div>';
+  }
+  h+='</section>';
+
+  h+='<section style="display:flex;flex-direction:column;gap:10px">';
+  if(!total)h+='<div class="card"><p class="muted" style="margin:0">No rounds yet. Rounds you start on the Today tab show up here, with the date you finished each day.</p></div>';
+  h+='<div class="rounds">';
+  list.forEach(function(r,i){
+    var dc=roundDone(r), no=total-i, complete=dc===7, open=state.openHist===r.id;
+    h+='<article class="card rcard"><div class="spread"><div><div class="eyebrow">Round '+no+'</div><div style="font-weight:600">'+esc(fmt(r.startDate))+' – '+esc(fmt(addDays(r.startDate,6)))+'</div><div class="small muted"><span class="te">'+esc(T(r.startDate).labelTe)+'</span> · '+esc(T(r.startDate).label)+'</div></div>';
+    h+=complete?'<span class="tag good">Complete</span>':'<span class="tag tabular">In progress · '+dc+'/7</span>';
+    h+='</div><div class="mini" aria-hidden="true">';
+    for(var k=1;k<=7;k++)h+='<span class="'+(r.days[String(k)].done?'d':'')+'"></span>';
+    h+='</div>';
+    if(open){
+      h+='<ul class="plan">';
+      for(var d=1;d<=7;d++){var rec=r.days[String(d)],dt=addDays(r.startDate,d-1);
+        h+='<li><span class="pd">Day '+d+'</span><span class="pc">'+esc(SCHEDULE[d-1].ch)+'<span class="pt">Planned '+esc(fmt(dt))+'</span></span><span class="pw tabular" style="color:'+(rec.done?'var(--good)':'var(--muted)')+';font-weight:600">'+(rec.done?(rec.doneAt?'Done '+esc(fmt(iso(new Date(rec.doneAt)))):'Done'):'Not done')+'</span></li>'}
+      h+='</ul>';
+    }
+    h+='<div class="row" style="justify-content:space-between;gap:4px;flex-wrap:wrap"><button type="button" class="btn quiet" id="tog-'+r.id+'" data-tog="'+r.id+'" aria-expanded="'+open+'">'+(open?'Hide days':'Show days')+'</button><div class="row" style="gap:4px">';
+    h+='<button type="button" class="btn quiet danger" id="del-'+r.id+'" data-del="'+r.id+'">'+(state.confirmDel===r.id?'Tap again to delete':'Delete')+'</button>';
+    if(!complete)h+='<button type="button" class="btn ghost" id="open-'+r.id+'" data-open="'+r.id+'" style="min-height:44px;padding:8px 16px">Continue</button>';
+    h+='</div></div></article>';
+  });
+  h+='</div></section>';
+  view.innerHTML=h;
+  on('sheet-connect',function(){var v=(document.getElementById('sheet-url').value||'').trim();
+    if(!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec/.test(v)){toast('Paste the web app URL ending in /exec');return}
+    state.sheetUrl=v;lsSet(LS_URL,v);render();pullSync()});
+  on('sheet-sync',function(){pullSync()});
+  on('sheet-off',function(){state.sheetUrl='';lsSet(LS_URL,'');state.syncStatus='off';state.syncMsg='';render()});
+  paintSync();
+  bind('[data-tog]',function(b){state.openHist=state.openHist===b.dataset.tog?null:b.dataset.tog;render()});
+  bind('[data-open]',function(b){state.selectedId=b.dataset.open;state.selectedDay=null;state.starting=false;setTab('today')});
+  bind('[data-del]',function(b){var id=b.dataset.del;
+    if(state.confirmDel===id){remove(id);state.confirmDel=null;if(state.selectedId===id)state.selectedId=null;toast('Round deleted');}
+    else{state.confirmDel=id;setTimeout(function(){if(state.confirmDel===id){state.confirmDel=null;if(state.tab==='history')render()}},3000)}
+    render()});
+}
+
+function renderGuide(){
+  var h='<div class="guide">';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Observances <span>पाठ के समय</span></h3><p>Read with firm faith, devotion and correct pronunciation, with the mind fixed on Sri Devi in the form dearest to you. Do not talk, think of other things, sleep, sneeze, yawn or spit while reading, and do not stop in the middle of a chapter. Ring bells at the beginning and end of each chapter.</p></section>';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Auspicious days <span>शुभ दिन</span></h3><p><strong>Tuesday, Friday and Saturday</strong> are especially auspicious for reading Sri Chandi. The Devi tithis are <strong>Ashtami, Navami and Chaturdashi</strong>.</p><p class="small muted">Tithis in this app follow the Telugu lunar calendar, taken at sunrise in Hyderabad and calculated on your phone. Check a panchangam for important dates.</p></section>';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Order of reading <span>पाठ का क्रम</span></h3><ol>';
+  STEPS.forEach(function(s){h+='<li><strong>'+esc(s[0])+'</strong> — <span class="hi">'+esc(s[1])+'</span></li>'});
+  h+='</ol></section>';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:10px"><h3>Three parts <span>तीन चरित्र</span></h3><div class="parts">';
+  [['kali','Chapter 1'],['lakshmi','Chapters 2–4'],['saraswati','Chapters 5–13']].forEach(function(x){var p=PARTS[x[0]];
+    h+='<div style="--c:'+p.color+'"><small>'+esc(p.charitra.split(' ')[0])+'</small><b>'+esc(p.name.replace('Sri ',''))+'</b><small>'+x[1]+'</small></div>'});
+  h+='</div></section>';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Seven-day schedule <span>७ दिनों में पाठ</span></h3><ul class="plan">';
+  SCHEDULE.forEach(function(d,i){h+='<li><span class="pd">Day '+(i+1)+'</span><span class="pc"><span class="dot" style="background:'+PARTS[d.part].color+'"></span>'+esc(d.ch)+'</span><span></span></li>'});
+  h+='</ul></section>';
+  h+='<section class="card" style="display:flex;flex-direction:column;gap:8px;background:var(--gold-soft);border-color:var(--gold)"><h3>The fruit of the paath <span>पाठ का फल</span></h3><p>One who reads Sri Chandi with faith and devotion attains health, wealth, long life and liberation. Whatever the motive, it is fulfilled. Shakti is the basis of all Ichchha (desire), Jnana (knowledge) and Kriya (action), so no one falls outside her realm.</p></section>';
+  h+='</div>';
+  view.innerHTML=h;
+}
+
+/* ---------- Plumbing ---------- */
+function bind(sel,fn){view.querySelectorAll(sel).forEach(function(b){b.addEventListener('click',function(){fn(b)})})}
+function on(id,fn){var el=document.getElementById(id);if(el)el.addEventListener('click',fn)}
+function setTab(t){state.tab=t;render();window.scrollTo(0,0)}
+function render(){
+  paintSync();
+  document.querySelectorAll('nav.tabs button').forEach(function(b){if(b.dataset.tab===state.tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  if(state.tab==='today')renderToday();else if(state.tab==='history')renderHistory();else renderGuide();
+}
+document.querySelectorAll('nav.tabs button').forEach(function(b){b.addEventListener('click',function(){state.confirmDel=null;setTab(b.dataset.tab)})});
+try{var h=location.hash.replace('#','');if(h==='history'||h==='guide')state.tab=h}catch(e){}
+render();
+connect();
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script>
+</body>
+</html>
