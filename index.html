@@ -101,6 +101,8 @@ body{font-variant-numeric:lining-nums}
 .step .sub{font-size:14px;color:var(--muted)}
 .step .hin{font-family:var(--hi);font-size:15px;color:var(--muted);white-space:nowrap}
 .step.main .en{color:var(--accent);font-size:18px}
+.optag{display:inline-block;vertical-align:middle;margin-left:6px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-decoration:none}
+.step.opt .box{border-style:dashed}
 .step.main.on .en{color:var(--muted)}
 .num{width:22px;text-align:center;font-family:var(--display);font-weight:700;color:var(--muted);font-size:17px}
 
@@ -278,10 +280,33 @@ var PARTS = {
   lakshmi:{name:'Sri Maha Lakshmi', hi:'श्री महालक्ष्मी', charitra:'Madhyama Charitra', color:'var(--lakshmi)'},
   saraswati:{name:'Sri Maha Saraswati', hi:'श्री महासरस्वती', charitra:'Uttara Charitra', color:'var(--saraswati)'}
 };
+/* Order of reading, per the common Gita Press / South Indian parayana sequence.
+   [English, Devanagari, optional?, note] */
 var STEPS = [
-  ['Devi Suktam','देवी सूक्तम्'],['Kavacham','कवचम्'],['Argala Stotra','अर्गला स्तोत्र'],['Keelakam','कीलकम्'],
-  ['Ratri Suktam','रात्रि सूक्तम्'],['Devi Mahatmya','देवी माहात्म्य'],['Phala Shruti','फलश्रुति'],['Kshama Prarthana','क्षमा प्रार्थना']
+  ['Devi Kavacham','देवी कवचम्',false,''],
+  ['Argala Stotram','अर्गला स्तोत्रम्',false,''],
+  ['Keelakam','कीलकम्',false,''],
+  ['Navarna japa','नवार्ण मन्त्र जप',true,'108 times, as per your practice'],
+  ['Ratri Suktam','रात्रि सूक्तम्',false,''],
+  ['Devi Mahatmya','देवी माहात्म्य',false,''],
+  ['Navarna japa','नवार्ण मन्त्र जप',true,'108 times again'],
+  ['Devi Suktam','देवी सूक्तम्',false,'Rigvedic “Aham Rudrebhih…”'],
+  ['Rahasya Trayam','रहस्यत्रयम्',true,'Pradhanika, Vaikritika, Murti Rahasya'],
+  ['Kshama Prarthana','क्षमा प्रार्थना',false,'']
 ];
+var REQUIRED = STEPS.map(function(x,i){return x[2]?-1:i}).filter(function(i){return i>=0});
+function blankSteps(){return STEPS.map(function(){return false})}
+/* Rounds saved with the earlier 8-step list: Devi Suktam, Kavacham, Argala, Keelakam, Ratri, Chapters, Phala Shruti, Kshama */
+var OLD8 = [7,0,1,2,4,5,-1,9];
+function fixSteps(rec){
+  if(!rec||!rec.steps||rec.steps.length===STEPS.length)return;
+  var out=blankSteps();
+  if(rec.steps.length===8)rec.steps.forEach(function(v,i){if(v&&OLD8[i]>=0)out[OLD8[i]]=true});
+  if(rec.done)REQUIRED.forEach(function(i){out[i]=true});
+  rec.steps=out;
+}
+function fixRound(r){if(r&&r.days)for(var i=1;i<=7;i++)fixSteps(r.days[String(i)]);return r}
+function requiredDone(rec){return REQUIRED.every(function(i){return rec.steps[i]})}
 var MAIN_STEP = 5;
 var WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var WD_LONG = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -310,7 +335,7 @@ function badges(s){var a=ausp(s),t=T(s),h='';
   return h}
 
 function newRound(start){
-  var days={};for(var i=1;i<=7;i++){days[String(i)]={steps:[false,false,false,false,false,false,false,false],done:false,doneAt:null}}
+  var days={};for(var i=1;i<=7;i++){days[String(i)]={steps:blankSteps(),done:false,doneAt:null}}
   return {id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), startDate:start, createdAt:new Date().toISOString(), days:days};
 }
 function roundDone(r){var c=0;for(var i=1;i<=7;i++){if(r.days[String(i)]&&r.days[String(i)].done)c++}return c}
@@ -420,7 +445,8 @@ function renderToday(){
   var t=todayIso();
   var sel=state.selectedDay&&state.selectedId===r.id?state.selectedDay:defaultDay(r);
   var date=addDays(r.startDate,sel-1), rec=r.days[String(sel)], s=SCHEDULE[sel-1], p=PARTS[s.part];
-  var doneCount=roundDone(r), stepsDone=rec.steps.filter(Boolean).length;
+  fixRound(r);
+  var doneCount=roundDone(r), stepsDone=REQUIRED.filter(function(i){return rec.steps[i]}).length;
   var startsIn=diff(t,r.startDate);
   var roundNo=sorted().slice().reverse().map(function(x){return x.id}).indexOf(r.id)+1;
 
@@ -452,13 +478,14 @@ function renderToday(){
   h+='<span class="tag'+(tdy.devi?' gold':'')+'"><span class="te">'+esc(tdy.labelTe)+'</span> · '+esc(tdy.label)+'</span>';
   if(AUSPICIOUS[dow(date)])h+='<span class="tag gold">'+WD_LONG[dow(date)]+'</span>';
   h+='</div>';
-  h+='<div class="progress" aria-hidden="true"><span style="width:'+Math.round(stepsDone/8*100)+'%"></span></div>';
+  h+='<div class="progress" aria-hidden="true"><span style="width:'+Math.round(stepsDone/REQUIRED.length*100)+'%"></span></div>';
   h+='<ol class="steps" aria-label="Order of reading">';
   STEPS.forEach(function(st,idx){
-    var on=rec.steps[idx], main=idx===MAIN_STEP;
-    h+='<li class="step'+(on?' on':'')+(main?' main':'')+'"><button type="button" id="step-'+idx+'" data-step="'+idx+'" aria-pressed="'+on+'">';
-    h+='<span class="num">'+(idx+1)+'</span><span class="box">'+CHECK+'</span><span class="txt"><span class="en">'+esc(main?s.ch:st[0])+'</span>';
+    var on=!!rec.steps[idx], main=idx===MAIN_STEP, opt=st[2];
+    h+='<li class="step'+(on?' on':'')+(main?' main':'')+(opt?' opt':'')+'"><button type="button" id="step-'+idx+'" data-step="'+idx+'" aria-pressed="'+on+'">';
+    h+='<span class="num">'+(idx+1)+'</span><span class="box">'+CHECK+'</span><span class="txt"><span class="en">'+esc(main?s.ch:st[0])+(opt?' <span class="optag">Optional</span>':'')+'</span>';
     if(main)h+='<span class="sub">'+esc(st[0])+' · '+esc(p.name)+'</span>';
+    else if(st[3])h+='<span class="sub">'+esc(st[3])+'</span>';
     h+='</span><span class="hin">'+esc(st[1])+'</span></button></li>';
   });
   h+='</ol>';
@@ -477,10 +504,10 @@ function renderToday(){
   bind('[data-day]',function(b){state.selectedId=r.id;state.selectedDay=+b.dataset.day;render()});
   bind('[data-step]',function(b){
     var idx=+b.dataset.step;rec.steps[idx]=!rec.steps[idx];
-    if(rec.steps.every(Boolean)&&!rec.done){rec.done=true;rec.doneAt=new Date().toISOString();toast('Day '+sel+' complete. जय माँ')}
+    if(requiredDone(rec)&&!rec.done){rec.done=true;rec.doneAt=new Date().toISOString();toast('Day '+sel+' complete. जय माँ')}
     persist(r);render();
   });
-  on('complete-day',function(){rec.steps=rec.steps.map(function(){return true});rec.done=true;rec.doneAt=new Date().toISOString();persist(r);toast('Day '+sel+' complete. जय माँ');
+  on('complete-day',function(){REQUIRED.forEach(function(i){rec.steps[i]=true});rec.done=true;rec.doneAt=new Date().toISOString();persist(r);toast('Day '+sel+' complete. जय माँ');
     var next=null;for(var i=sel+1;i<=7;i++){if(!r.days[String(i)].done){next=i;break}}
     state.selectedId=r.id;state.selectedDay=next||sel;render();window.scrollTo({top:0,behavior:'smooth'})});
   on('undo-day',function(){rec.done=false;rec.doneAt=null;persist(r);render()});
@@ -619,8 +646,8 @@ function renderGuide(){
   h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Observances <span>पाठ के समय</span></h3><p>Read with firm faith, devotion and correct pronunciation, with the mind fixed on Sri Devi in the form dearest to you. Do not talk, think of other things, sleep, sneeze, yawn or spit while reading, and do not stop in the middle of a chapter. Ring bells at the beginning and end of each chapter.</p></section>';
   h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Auspicious days <span>शुभ दिन</span></h3><p><strong>Tuesday, Friday and Saturday</strong> are especially auspicious for reading Sri Chandi. The Devi tithis are <strong>Ashtami, Navami and Chaturdashi</strong>.</p><p class="small muted">Tithis in this app follow the Telugu lunar calendar, taken at sunrise in Hyderabad and calculated on your phone. Check a panchangam for important dates.</p></section>';
   h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Order of reading <span>पाठ का क्रम</span></h3><ol>';
-  STEPS.forEach(function(s){h+='<li><strong>'+esc(s[0])+'</strong> — <span class="hi">'+esc(s[1])+'</span></li>'});
-  h+='</ol></section>';
+  STEPS.forEach(function(s,i){h+='<li><strong>'+esc(i===MAIN_STEP?'Devi Mahatmya — the day’s chapters':s[0])+'</strong> — <span class="hi">'+esc(s[1])+'</span>'+(s[2]?' <span class="optag">Optional</span>':'')+(s[3]?'<br><span class="small muted">'+esc(s[3])+'</span>':'')+'</li>'});
+  h+='</ol><p class="small muted">Recite the opening prayers (1–5) and the closing ones (7–10) every day of the seven-day reading, around that day’s chapters. Some traditions add the Devi Atharvashirsham before the chapters or the Siddha Kunjika Stotram after them; follow your guru or family practice where it differs. The fruits of the paath (phala shruti) are declared by the Devi herself in chapter 12.</p></section>';
   h+='<section class="card" style="display:flex;flex-direction:column;gap:10px"><h3>Three parts <span>तीन चरित्र</span></h3><div class="parts">';
   [['kali','Chapter 1'],['lakshmi','Chapters 2–4'],['saraswati','Chapters 5–13']].forEach(function(x){var p=PARTS[x[0]];
     h+='<div style="--c:'+p.color+'"><small>'+esc(p.charitra.split(' ')[0])+'</small><b>'+esc(p.name.replace('Sri ',''))+'</b><small>'+x[1]+'</small></div>'});
