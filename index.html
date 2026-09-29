@@ -275,6 +275,10 @@ var SCHEDULE = [
   {ch:'Chapter 11', n:[11], part:'saraswati'},
   {ch:'Chapters 12 & 13', n:[12,13], part:'saraswati'}
 ];
+/* Shlokas per chapter, Gita Press numbering (uvacha and half-verses counted), total 700 */
+var VERSES = {1:104,2:69,3:44,4:42,5:129,6:24,7:27,8:63,9:41,10:32,11:55,12:41,13:29};
+function dayVerses(d){return d.n.reduce(function(a,c){return a+VERSES[c]},0)}
+function chBreak(d){return d.n.map(function(c){return 'Ch '+c+' · '+VERSES[c]}).join('  ·  ')}
 var PARTS = {
   kali:{name:'Sri Maha Kali', hi:'श्री महाकाली', charitra:'Prathama Charitra', color:'var(--kali)'},
   lakshmi:{name:'Sri Maha Lakshmi', hi:'श्री महालक्ष्मी', charitra:'Madhyama Charitra', color:'var(--lakshmi)'},
@@ -473,7 +477,7 @@ function renderToday(){
   h+='<span class="part"><b style="background:'+p.color+'"></b>'+esc(p.charitra)+' · '+esc(p.name)+'</span>';
   h+='<h2 class="chapters">'+esc(s.ch)+'</h2>';
   h+='<div class="meta">';
-  h+='<span class="tag">'+s.n.length+' chapter'+(s.n.length>1?'s':'')+' of Devi Mahatmya</span>';
+  h+='<span class="tag tabular">'+dayVerses(s)+' shlokas</span>';
   var tdy=T(date);
   h+='<span class="tag'+(tdy.devi?' gold':'')+'"><span class="te">'+esc(tdy.labelTe)+'</span> · '+esc(tdy.label)+'</span>';
   if(AUSPICIOUS[dow(date)])h+='<span class="tag gold">'+WD_LONG[dow(date)]+'</span>';
@@ -484,7 +488,7 @@ function renderToday(){
     var on=!!rec.steps[idx], main=idx===MAIN_STEP, opt=st[2];
     h+='<li class="step'+(on?' on':'')+(main?' main':'')+(opt?' opt':'')+'"><button type="button" id="step-'+idx+'" data-step="'+idx+'" aria-pressed="'+on+'">';
     h+='<span class="num">'+(idx+1)+'</span><span class="box">'+CHECK+'</span><span class="txt"><span class="en">'+esc(main?s.ch:st[0])+(opt?' <span class="optag">Optional</span>':'')+'</span>';
-    if(main)h+='<span class="sub">'+esc(st[0])+' · '+esc(p.name)+'</span>';
+    if(main)h+='<span class="sub tabular">'+(s.n.length>1?s.n.map(function(c){return 'Ch '+c+': '+VERSES[c]}).join(', ')+' shlokas':VERSES[s.n[0]]+' shlokas')+' · '+esc(p.name)+'</span>';
     else if(st[3])h+='<span class="sub">'+esc(st[3])+'</span>';
     h+='</span><span class="hin">'+esc(st[1])+'</span></button></li>';
   });
@@ -552,7 +556,7 @@ function renderStart(){
 
   h+='<div class="eyebrow">Your seven days</div><ul class="plan" aria-label="Your seven days">';
   SCHEDULE.forEach(function(d,i){var dt=addDays(s,i),tt=T(dt);
-    h+='<li><span class="pd">Day '+(i+1)+'</span><span class="pc"><span class="dot" style="background:'+PARTS[d.part].color+'"></span>'+esc(d.ch)+'<span class="pt'+(tt.devi?' devi':'')+'">'+esc(tt.label)+'</span></span><span class="pw tabular">'+esc(fmt(dt))+'</span></li>'});
+    h+='<li><span class="pd">Day '+(i+1)+'</span><span class="pc"><span class="dot" style="background:'+PARTS[d.part].color+'"></span>'+esc(d.ch)+'<span class="pt'+(tt.devi?' devi':'')+'">'+dayVerses(d)+' shlokas · '+esc(tt.label)+'</span></span><span class="pw tabular">'+esc(fmt(dt))+'</span></li>'});
   h+='</ul>';
   h+='<button type="button" class="btn primary block" id="begin">Begin on '+esc(fmt(s))+'</button>';
   h+='</section>';
@@ -649,11 +653,12 @@ function renderGuide(){
   STEPS.forEach(function(s,i){h+='<li><strong>'+esc(i===MAIN_STEP?'Devi Mahatmya — the day’s chapters':s[0])+'</strong> — <span class="hi">'+esc(s[1])+'</span>'+(s[2]?' <span class="optag">Optional</span>':'')+(s[3]?'<br><span class="small muted">'+esc(s[3])+'</span>':'')+'</li>'});
   h+='</ol><p class="small muted">Recite the opening prayers (1–5) and the closing ones (7–10) every day of the seven-day reading, around that day’s chapters. Some traditions add the Devi Atharvashirsham before the chapters or the Siddha Kunjika Stotram after them; follow your guru or family practice where it differs. The fruits of the paath (phala shruti) are declared by the Devi herself in chapter 12.</p></section>';
   h+='<section class="card" style="display:flex;flex-direction:column;gap:10px"><h3>Three parts <span>तीन चरित्र</span></h3><div class="parts">';
-  [['kali','Chapter 1'],['lakshmi','Chapters 2–4'],['saraswati','Chapters 5–13']].forEach(function(x){var p=PARTS[x[0]];
+  [['kali','Ch 1 · 104'],['lakshmi','Ch 2–4 · 155'],['saraswati','Ch 5–13 · 441']].forEach(function(x){var p=PARTS[x[0]];
     h+='<div style="--c:'+p.color+'"><small>'+esc(p.charitra.split(' ')[0])+'</small><b>'+esc(p.name.replace('Sri ',''))+'</b><small>'+x[1]+'</small></div>'});
   h+='</div></section>';
   h+='<section class="card" style="display:flex;flex-direction:column;gap:8px"><h3>Seven-day schedule <span>७ दिनों में पाठ</span></h3><ul class="plan">';
-  SCHEDULE.forEach(function(d,i){h+='<li><span class="pd">Day '+(i+1)+'</span><span class="pc"><span class="dot" style="background:'+PARTS[d.part].color+'"></span>'+esc(d.ch)+'</span><span></span></li>'});
+  SCHEDULE.forEach(function(d,i){h+='<li><span class="pd">Day '+(i+1)+'</span><span class="pc"><span class="dot" style="background:'+PARTS[d.part].color+'"></span>'+esc(d.ch)+'<span class="pt tabular">'+esc(d.n.length>1?d.n.map(function(c){return 'Ch '+c+': '+VERSES[c]}).join(', '):'')+'</span></span><span class="pw tabular" style="font-weight:600">'+dayVerses(d)+'</span></li>'});
+  h+='<li><span class="pd">Total</span><span class="pc">13 chapters</span><span class="pw tabular" style="font-weight:700">700</span></li>';
   h+='</ul></section>';
   h+='<section class="card" style="display:flex;flex-direction:column;gap:8px;background:var(--gold-soft);border-color:var(--gold)"><h3>The fruit of the paath <span>पाठ का फल</span></h3><p>One who reads Sri Chandi with faith and devotion attains health, wealth, long life and liberation. Whatever the motive, it is fulfilled. Shakti is the basis of all Ichchha (desire), Jnana (knowledge) and Kriya (action), so no one falls outside her realm.</p></section>';
   h+='</div>';
