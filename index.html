@@ -597,16 +597,17 @@ function renderHistory(){
   h+='</div></section>';
 
   /* Google Sheets sync */
-  h+='<section class="card" style="display:flex;flex-direction:column;gap:10px"><div><div style="font-weight:700">Google Sheets sync</div><div class="small muted">Keeps a copy of every round in your own Google Sheet, and lets another phone load the same history.</div></div>';
   if(!state.sheetUrl){
+    h+='<details class="card" style="display:flex;flex-direction:column;gap:10px"><summary style="cursor:pointer;font-weight:700;min-height:28px">Google Sheets backup <span class="optag">Optional</span></summary><div style="display:flex;flex-direction:column;gap:10px;margin-top:10px"><div class="small muted">Not needed to use the app: your rounds are already saved on this phone. Connect a Google Sheet only if you want a backup or the same history on another phone.</div>';
     h+='<div class="field"><label for="sheet-url" class="small">Apps Script web app URL</label><input type="url" id="sheet-url" placeholder="https://script.google.com/macros/s/…/exec" style="font:inherit;font-size:15px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);width:100%;min-height:48px"></div>';
     h+='<button type="button" class="btn ghost block" id="sheet-connect">Connect Google Sheet</button>';
-    h+='<div class="small muted">Set-up steps are in the README that came with the app.</div>';
+    h+='<div class="small muted">Set-up steps: see the README at github.com/BalenduS/chandi-paath.</div></div></details>';
   } else {
+    h+='<section class="card" style="display:flex;flex-direction:column;gap:10px"><div><div style="font-weight:700">Google Sheets backup</div><div class="small muted">Every round is copied to your Google Sheet, and another phone with the same link loads the same history.</div></div>';
     h+='<div class="small" id="sync-msg" style="color:var(--muted)"></div>';
     h+='<div class="row" style="gap:8px"><button type="button" class="btn ghost" id="sheet-sync" style="flex:1">Sync now</button><button type="button" class="btn quiet danger" id="sheet-off">Disconnect</button></div>';
+    h+='</section>';
   }
-  h+='</section>';
 
   h+='<section style="display:flex;flex-direction:column;gap:10px">';
   if(!total)h+='<div class="card"><p class="muted" style="margin:0">No rounds yet. Rounds you start on the Today tab show up here, with the date you finished each day.</p></div>';

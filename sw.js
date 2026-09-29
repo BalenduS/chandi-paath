@@ -1,6 +1,6 @@
 /* Chandi Paath service worker: offline app shell + cached fonts.
    Bump VERSION whenever you change index.html so phones pick up the update. */
-const VERSION = 'chandi-v3';
+const VERSION = 'chandi-v4';
 const SHELL = [
   './',
   'index.html',
